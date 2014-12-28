@@ -1,0 +1,102 @@
+<DOCTYPE HTML>
+<html>
+    <head>
+        <title>Javascript Inheritance Test</title>
+        <script type="text/javascript" src="inherit-min.js"></script>
+    </head>
+    <body>
+        <h1>Javascript Inheritance Test</h1>
+        <p>Please view the source for an example of the inheritance utility.</p>
+        <script type="text/javascript">
+            var Animal = Object.$extend({
+                initialize: function (gender) {
+                    this._gender = gender;
+                    this._foods = [];
+                },
+                getGender: function () { return this._gender; },
+                setGender: function (gender) { this._gender = gender; },
+
+                addFood: function (food) {
+                    this._foods.push(food);
+                },
+
+                removeFood: function (food) {
+                    for (var i = this._foods.length; i--;) {
+                        if (this._foods[i] === food) {
+                            this._foods.splice(i, 1);
+                            break;
+                        }
+                    }
+                },
+
+                willEat: function (food) {
+                    for (var i = this._foods.length; i--;) {
+                        if (this._foods[i] === food)
+                            return true;
+                    }
+                    return false;
+                }
+            });
+
+            var Human = Animal.$extend({
+                initialize: function (name, gender) {
+                    this.uber('initialize', gender);
+                    this._name = name;
+                    this.addFood('meat');
+                    this.addFood('vegetables');
+                    this.addFood('fruits');
+                },
+                goVegan: function () {
+                    this.removeFood('meat');
+                },
+                nameWithTitle: function () {
+                    return this._getTitlePrefix() + this._name;
+                },
+                _getTitlePrefix: function () {
+                    if (this.getGender() === 'male') return 'Mr. ';
+                    else return 'Ms. ';
+                }
+            });
+
+            var Cat = Animal.$extend({
+                initialize: function (gender) {
+                    this.uber('initialize', gender);
+                    this.addFood('meat');
+                },
+                speak: function () {
+                    return 'purrr';
+                }
+            });
+
+            var DomesticCat = Cat.$extend({
+                initialize: function (gender) {
+                    this.uber('initialize', gender);
+                    this.addFood('orijen');
+                },
+                speak: function () {
+                    return this.uber('speak') + ', meow!';
+                }
+            });
+
+            var WildCat = Cat.$extend({
+                initialize: function (gender) {
+                    this.uber('initialize', gender);
+                },
+                speak: function () {
+                    return this.uber('speak') + ', growl, snarl!';
+                }
+            });
+
+            var jack = new Human('Jack', 'male');
+            var jill = new Human('Jill', 'female');
+            var kitty = new DomesticCat('female');
+            var tiger = new WildCat('male');
+            jill.goVegan();
+            console.log(jill.nameWithTitle() + ' eats meat? ' + jill.willEat('meat'));
+            console.log(jack.nameWithTitle() + ' eats meat? ' + jack.willEat('meat'));
+            console.log('Domestic cat eats orijen? ' + kitty.willEat('orijen'));
+            console.log('What does the domestic cat say? ' + kitty.speak());
+            console.log('What does the wild cat say? ' + tiger.speak());
+        </script>
+    </body>
+</html>
